@@ -1,0 +1,13 @@
+--- origsrc/libappindicator-12.10.0/bindings/python/Makefile.am	2012-07-11 12:28:34.415113800 -0500
++++ src/libappindicator-12.10.0/bindings/python/Makefile.am	2016-11-30 00:44:57.311648200 -0600
+@@ -19,8 +19,8 @@ pkgappindicator_PYTHON = __init__.py
+ appindicatordir = $(pkgpyexecdir)/appindicator
+ appindicator_LTLIBRARIES = _appindicator.la
+ 
+-_appindicator_la_LDFLAGS = -module -avoid-version -export-symbols-regex init_appindicator
+-_appindicator_la_LIBADD = $(APPINDICATOR_PYTHON_LIBS) -L$(top_builddir)/src/.libs -lappindicator
++_appindicator_la_LDFLAGS = -module -avoid-version -no-undefined -export-symbols-regex init_appindicator
++_appindicator_la_LIBADD = $(APPINDICATOR_PYTHON_LIBS) $(top_builddir)/src/libappindicator.la -lpython$(PYTHON_VERSION)
+ _appindicator_la_SOURCES = appindicatormodule.c
+ nodist__appindicator_la_SOURCES = appindicator.c
+ 

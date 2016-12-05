@@ -1,0 +1,72 @@
+inherit python gnome2
+
+NAME="libappindicator"
+VERSION=12.10.0
+RELEASE=1
+CATEGORY="Libs"
+SUMMARY="Ayatana indicator library"
+DESCRIPTION="A library to allow applications to export a menu into the
+Ayatana bar. Based on KSNI it also works in KDE and will fallback to
+generic Systray support if none of those are available."
+HOMEPAGE="https://launchpad.net/libappindicator"
+SRC_URI="${HOMEPAGE}/${VERSION%.*}/${VERSION}/+download/libappindicator-${VERSION}.tar.gz"
+PATCH_URI="12.10.0-no-undefined.patch"
+
+PKG_NAMES="${NAME}1 ${NAME}-common ${NAME}-devel ${NAME}-doc ${NAME}3_1 ${NAME}3-devel
+           girepository-AppIndicator0.1 girepository-AppIndicator3_0.1
+           vala-appindicator vala-appindicator3 python-appindicator"
+libappindicator1_SUMMARY="${SUMMARY} for GTK+ 2"
+libappindicator1_REQUIRES="${NAME}-common"
+libappindicator1_CONTENTS="usr/bin/cygappindicator-1.dll"
+libappindicator_common_CONTENTS="
+	usr/share/doc/libappindicator/
+"
+libappindicator_devel_SUMMARY=${libappindicator1_SUMMARY}
+libappindicator_devel_CONTENTS="
+	usr/include/libappindicator-0.1/
+	usr/lib/libappindicator.dll.a
+	usr/lib/pkgconfig/appindicator-0.1.pc
+"
+libappindicator_doc_CONTENTS="Doc"
+libappindicator_doc_SUMMARY="API documentation for libappindicator"
+libappindicator_doc_CONTENTS="usr/share/gtk-doc/html/libappindicator/"
+libappindicator3_1_SUMMARY="${SUMMARY} for GTK+ 3"
+libappindicator3_1_REQUIRES="${NAME}-common"
+libappindicator3_1_CONTENTS="usr/bin/cygappindicator3-1.dll"
+libappindicator3_devel_SUMMARY=${libappindicator3_1_SUMMARY}
+libappindicator3_devel_CONTENTS="
+	usr/include/libappindicator3-0.1/
+	usr/lib/libappindicator3.dll.a
+	usr/lib/pkgconfig/appindicator3-0.1.pc
+"
+girepository_AppIndicator0_1_CONTENTS="usr/*/gir*-1.0/AppIndicator-0.1.*"
+girepository_AppIndicator3_0_1_CONTENTS="usr/*/gir*-1.0/AppIndicator3-0.1.*"
+vala_appindicator_CONTENTS="usr/share/vala/vapi/appindicator-*"
+vala_appindicator3_CONTENTS="usr/share/vala/vapi/appindicator3-*"
+python_appindicator_CONTENTS="
+	${PYTHON_SITELIB#/}/appindicator/
+	usr/share/pygtk/2.0/defs/appindicator.*
+"
+
+# this hasn't been updated in far too long
+CFLAGS+=" -Wno-error=deprecated-declarations"
+
+src_compile() {
+	cd ${S}
+	gnome2_autoreconf
+
+	mkdir -p ${B}/gtk2
+	cd ${B}/gtk2
+	gnome2_compile --with-gtk=2
+
+	mkdir -p ${B}/gtk3
+	cd ${B}/gtk3
+	gnome2_compile --with-gtk=3
+}
+
+src_install() {
+	cd ${B}/gtk3
+	cyginstall
+	cd ${B}/gtk2
+	cyginstall
+}
